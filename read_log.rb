@@ -90,7 +90,26 @@ def run_report(options = {}, file_name)
         read_log(options)
     end
     puts "--------#{file_name.upcase} REPORT--------"
-    puts File.read(file_path)
+    content = File.read(file_path)
+    puts content
+
+    if file_name == 'kills' # Player Ranking
+        data = JSON.parse(content)
+
+        ranking = {}
+        player_data = data.map { |k, v| v['kills'] }
+        player_data.each do |data|
+            data.keys.each do |k|
+                if ranking[k].nil?
+                    ranking[k] = data[k]
+                else
+                    ranking[k] += data[k]
+                end
+            end
+        end
+        puts "--------PLAYER RANKING--------"
+        puts ranking.sort_by{ |k, v| -v }.to_h
+    end
 end
 
 if options[:kills]
